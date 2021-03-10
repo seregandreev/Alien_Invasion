@@ -1,0 +1,46 @@
+import pygame
+from pygame.sprite import Group
+from settings import Settings
+from ship import Ship
+from alien import Alien
+from star import Star
+import game_functions as gf
+
+def run_game():
+    # Инициализирует игру и создает объект экрана.
+    pygame.init()
+    ai_settings = Settings()
+    screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
+    
+    pygame.display.set_caption("Alien Invasion")
+    
+    #создание корабля
+    ship = Ship(ai_settings, screen)
+    #Создание группы для хранения пуль
+    bullets = Group()
+    #Создание группы пришельцев
+    aliens = Group()
+    #Создание группы звезд
+    stars = Group()    
+    #создание сетки звезд
+    gf.create_grid_stars(ai_settings, screen, ship, stars)
+    #создание флота пришельцев
+    gf.create_fleet(ai_settings, screen, ship, aliens)
+    
+    # Запуск основного цикла игры.
+    while True:
+        # Отслеживание событий клавиатуры и мыши
+        gf.check_events(ai_settings, screen, ship, bullets)
+        
+        #Обновление позиции ракеты
+        ship.update()
+        
+        #Обновление позиции пуль
+        gf.update_bullets(aliens, bullets)
+        
+        #Обновление позиции пришельцев
+        gf.update_aliens(ai_settings, aliens)
+        
+        #обновляет изображения на экране и отбражает новый экран
+        gf.update_screen(ai_settings, screen, ship, aliens, bullets, stars)       
+run_game()
